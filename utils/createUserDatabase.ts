@@ -13,7 +13,7 @@ export async function createUserDatabase(userId: string) {
 
   const userPrisma = new PrismaClient({
     datasources: {
-      db: { url: `postgresql://himanshu:0202@localhost:5432/${userDbName}` },
+      db: { url: `${process.env.LOCAL_DB}/${userDbName}` },
     },
   });
 

@@ -19,11 +19,17 @@ export async function POST(req: Request) {
         const { title, content } = await req.json();
         console.log(title, content);
 
-        const post = await userDb.Post.create({
-            data: { title, content },
-        });
+        // Use raw SQL to create the post
+        await userDb.$executeRawUnsafe(`
+            INSERT INTO "Post" (title, content) VALUES ($1, $2) RETURNING *
+        `, title, content);
+        
+        // Optionally, you could fetch the created post if needed
+        const createdPost = await userDb.$queryRawUnsafe(`
+            SELECT * FROM "Post" WHERE title = $1 AND content = $2
+        `, title, content);
 
-        return new Response(JSON.stringify(post), {
+        return new Response(JSON.stringify(createdPost), {
             status: 200,
             headers: { "Content-Type": "application/json" },
         });
@@ -36,13 +42,17 @@ export async function POST(req: Request) {
     }
 }
 
+
 export async function GET() {
     try {
         const userId = await getSession();
         console.log("You are inside GET mode");
         const userDb = getUserDatabase(userId);
 
-        const posts = await userDb.Post.findMany();
+        const posts = await userDb.$queryRawUnsafe(`
+            SELECT * FROM "Post"
+        `);
+
         return new Response(JSON.stringify(posts), {
             status: 200,
             headers: { "Content-Type": "application/json" },
