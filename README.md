@@ -3,7 +3,7 @@
 1. **Clone the repository**:
 
     ```bash
-    git clone https://github.com/your-username/Nextjs-user-portal.git
+    git clone https://github.com/Himanshu-Paliwal525/Nextjs-user-portal.git
     cd Nextjs-user-portal
     ```
 
